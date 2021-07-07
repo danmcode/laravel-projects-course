@@ -11,7 +11,7 @@ class UserController extends Controller
         //Todos los usuarios que se van a mostrar en la vista
         //User hace referencia a la clase user que es una clase preparada
         //que es como la tabla en la base de datos de usuario.
-        $user = User::latest()->get();
+        $users = User::latest()->get();
 
         /**
          * Retornar la vista, utilizando clases de Laravel
@@ -29,10 +29,17 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name'      => ['required'],
+            //unique: Tabla ususarios
+            'email'     => ['required', 'email', 'unique:users'],
+            'password'  => ['required', 'min:8'],
+        ]);
+
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => $request->password,
+            'password' => bycript($request->password),
         ]);
         // Retornar a las vista anterior
         return back();
