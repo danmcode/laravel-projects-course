@@ -1,0 +1,1 @@
+Este es el footer de la página
