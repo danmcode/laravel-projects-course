@@ -12,5 +12,8 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('post');
 });
+
+//Creación de la ruta para guardar
+Route::post('post', 'PostController@store')->name('posts.store');
