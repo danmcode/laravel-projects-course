@@ -15,9 +15,16 @@ class CreatePostsTable extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->bigIncrements('id');
+            
+            //Campos que solo permita numeros positivos almacenar los id de los usuarios
+            $table->unsignedBigInteger('user_id');
+
             //Creación de una nueva tabla en la BD
             $table->string('title');
-
+            
+            //Creación de la relación
+            $table->foreign('user_id')->references('id')->on('users');
+            
             $table->timestamps();
         });
     }
