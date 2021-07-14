@@ -42,4 +42,27 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class);
     }
+
+    /**
+     * Función para que todos los datos que se obtengan al
+     * momento de realizar en una consulta tengan un
+     * formato especifico
+     */
+    public function getGetNameAttribute()
+    {
+
+        //Si queremos que todos los datos se muestren UPPER
+        // return strtoupper($this->name);
+        return ucfirst($this->name);
+    }
+
+    /**
+     * Función para que todos los datos que se guarden al
+     * momento de realizar en una consulta tengan un
+     * formato especifico
+     */
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = strtolower($value);
+    }
 }
