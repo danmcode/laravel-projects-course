@@ -28,4 +28,10 @@ class Post extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    //Obtener el extracto del texto del body del POST
+    public function getGetExcerptAttribute()
+    {
+        return substr($this->body, 0, 140);
+    }
 }

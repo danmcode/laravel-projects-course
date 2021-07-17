@@ -7,7 +7,7 @@
 
             @foreach($posts as $post)
 
-            <div class="card">
+            <div class="card mb-4">
 
                 <div class="card-body">
 
@@ -29,6 +29,7 @@
             </div>
 
             @endforeach
+            {{ $posts->links() }}
 
         </div>
     </div>
