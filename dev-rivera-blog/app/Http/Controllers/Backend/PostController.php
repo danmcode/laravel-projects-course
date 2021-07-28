@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Post;
-use Illuminate\Http\Request;
+//use Illuminate\Http\Request;
+use App\Http\Requests\PostRequest;
+
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -17,11 +20,13 @@ class PostController extends Controller
     {
         //Creacion y listado de los posts
 
-        $post = Post::latest()->get();
+        $posts = Post::latest()->get();
+        //dd($posts);
 
-        //Compact sirve para trabajar igualque un array
+        //Compact sirve para trabajar igual que un array
         //pero la variable debe tener el mismo nombre de la vista
-        return view('post.index', compact($posts));
+
+        return view('posts.index', compact('posts'));
     }
 
     /**
@@ -31,7 +36,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
@@ -40,20 +45,26 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
-        //
-    }
+        //Salvar
+        $post = Post::create([
+            'user_id' => auth()->user()->id
+        ] + $request->all());
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Post $post)
-    {
-        //
+        //Image
+        if( $request->file('file') ){
+            $post->image = $request->file('file')
+            ->store('posts', 'public');
+
+            //Guardar Post
+            $post->save();
+        }
+
+        // retornar, con la variable de sesión 
+        // que se borra con la actualización
+        return back()->with('status', 'Creado con éxito');
+
     }
 
     /**
@@ -64,7 +75,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        return view('posts.edit', compact('post'));
     }
 
     /**
@@ -74,9 +85,28 @@ class PostController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(PostRequest $request, Post $post)
     {
-        //
+
+        //Eliminar imagen anterior
+
+        $post->update($request->all());
+
+        //Image
+        if( $request->file('file') ){
+
+            //Eliminar imagen
+            Storage::disk('public')->delete($post->image);
+
+            $post->image = $request->file('file')
+            ->store('posts', 'public');
+        
+            //Guardar Post
+            $post->save();
+        }
+
+        return back()->with('status', 'Actualizado con éxito');
+
     }
 
     /**
@@ -87,6 +117,11 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+
+        //Elminar imagen
+        Storage::disk('public')->delete($post->image);
+        $post->delete();
+
+        return back()->with('status', 'Eliminado con éxito');
     }
 }
