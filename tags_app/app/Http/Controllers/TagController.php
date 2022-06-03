@@ -9,7 +9,19 @@ class TagController extends Controller
 {
     public function Store(Request $request)
     {
+
+        $request->validate([
+            'name' => 'required'
+        ]);
+
         Tag::create($request->all());
+
+        return redirect('/');
+    }
+
+    public function Destroy(Tag $tag)
+    {
+        $tag->delete();
 
         return redirect('/');
     }
